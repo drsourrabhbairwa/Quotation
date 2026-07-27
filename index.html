@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amitek Business Tools</title>
+<style>
+:root{
+  --blue:#0C447C;--blue2:#1565C0;--blue-lt:#E3F2FD;
+  --grn:#1B5E20;--grn-lt:#E8F5E9;
+  --red:#B71C1C;--red-lt:#FFEBEE;
+  --org:#E65100;--org-lt:#FFF3E0;
+  --gold:#F9A825;--gold-lt:#FFFDE7;
+  --bg:#f0f4f8;--surface:#fff;--s2:#f8fafc;
+  --bdr:#e0e7ef;--txt:#1a1a1a;--muted:#6b7a8d;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);font-size:13px;}
+
+/* ---- LOGIN ---- */
+#login{display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:linear-gradient(135deg,#061528,#0C447C);}
+.lcard{background:#fff;border-radius:20px;padding:44px 36px;width:360px;text-align:center;
+  box-shadow:0 24px 60px rgba(0,0,0,0.3);}
+.llogo{font-size:22px;font-weight:800;color:var(--blue);margin-bottom:4px;}
+.lsub{font-size:11px;color:var(--muted);margin-bottom:28px;}
+.linp{width:100%;padding:13px 16px;border:2px solid var(--bdr);border-radius:10px;
+  font-size:15px;letter-spacing:4px;outline:none;margin-bottom:14px;
+  transition:border 0.2s;font-family:'Segoe UI',sans-serif;}
+.linp:focus{border-color:var(--blue);}
+.lbtn{width:100%;padding:13px;background:linear-gradient(135deg,var(--blue),var(--blue2));
+  color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;}
+.lerr{color:var(--red);font-size:12px;margin-top:8px;display:none;}
+
+/* ---- NAV ---- */
+#app{display:none;}
+.nav{background:linear-gradient(135deg,var(--blue),var(--blue2));padding:0 20px;
+  display:flex;align-items:center;justify-content:space-between;height:56px;
+  position:sticky;top:0;z-index:200;}
+.nav-left{display:flex;align-items:center;gap:12px;}
+.nav-logo{background:rgba(255,255,255,0.15);border-radius:8px;padding:5px 12px;
+  font-size:15px;font-weight:800;color:#fff;letter-spacing:1px;display:flex;align-items:center;gap:8px;}
+.nav-logo img{height:28px;width:auto;}
+.nav-info{color:rgba(255,255,255,0.8);font-size:11px;line-height:1.5;}
+.nav-out{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);
+  color:#fff;padding:6px 14px;border-radius:7px;cursor:pointer;font-size:11px;font-weight:600;}
+
+/* ---- TABS ---- */
+.tabs{background:#fff;border-bottom:2px solid var(--bdr);display:flex;padding:0 20px;gap:2px;}
+.tb{padding:12px 22px;background:none;border:none;color:var(--muted);font-size:13px;
+  font-weight:600;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.2s;
+  font-family:'Segoe UI',sans-serif;}
+.tb.active{color:var(--blue);border-bottom:3px solid var(--blue);}
+.tb:hover{color:var(--blue);}
+
+/* ---- PANELS ---- */
+.tc{padding:20px;max-width:1400px;margin:0 auto;}
+.tp{display:none;}
+.tp.active{display:block;}
+
+/* ---- CARDS ---- */
+.card{background:#fff;border:1px solid var(--bdr);border-radius:12px;padding:18px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.05);}
+.ch{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:14px;
+  padding-bottom:8px;border-bottom:2px solid var(--blue-lt);}
+
+/* ---- FORMS ---- */
+label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;
+  letter-spacing:0.5px;display:block;margin-bottom:4px;}
+input,select,textarea{width:100%;padding:9px 12px;border:1.5px solid var(--bdr);
+  border-radius:8px;font-size:12px;color:var(--txt);outline:none;
+  transition:border 0.2s;font-family:'Segoe UI',sans-serif;background:#fff;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);}
+.fg{margin-bottom:12px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* ---- BUTTONS ---- */
+.btn{padding:9px 18px;border:none;border-radius:8px;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;font-family:'Segoe UI',sans-serif;
+  display:inline-flex;align-items:center;gap:6px;}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.15);}
+.btn-blue{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;}
+.btn-grn{background:linear-gradient(135deg,var(--grn),#2E7D32);color:#fff;}
+.btn-org{background:linear-gradient(135deg,var(--org),#F57F17);color:#fff;}
+.btn-red{background:linear-gradient(135deg,var(--red),#C62828);color:#fff;}
+.btn-ghost{background:#fff;border:1.5px solid var(--bdr);color:var(--muted);}
+.btn-w{width:100%;}
+
+/* ---- CATALOGUE ---- */
+.cat-hdr{background:linear-gradient(135deg,var(--blue),var(--blue2));border-radius:12px;
+  padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;}
+.cat-hdr h2{color:#fff;font-size:16px;margin-bottom:3px;}
+.cat-hdr p{color:rgba(255,255,255,0.75);font-size:11px;}
+.cf{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px;}
+.cfb{padding:6px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:#fff;
+  color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;font-family:'Segoe UI',sans-serif;}
+.cfb.active,.cfb:hover{background:var(--blue);border-color:var(--blue);color:#fff;}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.pcard{background:#fff;border:1px solid var(--bdr);border-radius:12px;overflow:hidden;
+  transition:all 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.05);}
+.pcard:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(12,68,124,0.12);}
+.pimg{width:100%;height:150px;background:var(--blue-lt);position:relative;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.pimg img{width:100%;height:100%;object-fit:cover;}
+.pph{text-align:center;color:var(--muted);}
+.pph .i{font-size:34px;margin-bottom:5px;}
+.pph .t{font-size:10px;}
+.pcatbadge{position:absolute;top:8px;left:8px;padding:3px 9px;border-radius:10px;
+  font-size:9px;font-weight:700;color:#fff;}
+.peditbtn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.9);
+  border:none;border-radius:6px;padding:4px 8px;font-size:10px;cursor:pointer;
+  color:var(--blue);font-weight:600;font-family:'Segoe UI',sans-serif;}
+.pbody{padding:14px;}
+.pname{font-size:12px;font-weight:700;color:var(--blue);margin-bottom:3px;line-height:1.4;}
+.pnote{font-size:10px;color:var(--muted);margin-bottom:8px;}
+.pmrp{font-size:13px;font-weight:800;color:var(--org);margin-bottom:7px;}
+.ppacks{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px;}
+.pchip{background:var(--blue-lt);color:var(--blue);padding:2px 8px;border-radius:10px;font-size:9px;font-weight:600;}
+.pacts{display:flex;gap:5px;}
+.pbtn{flex:1;padding:6px;border:none;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Segoe UI',sans-serif;}
+.pbtn-tds{background:var(--blue-lt);color:var(--blue);}
+.pbtn-q{background:var(--blue);color:#fff;}
+.pbtn-v{background:var(--grn-lt);color:var(--grn);}
+
+/* ---- QUOTATION ---- */
+.qmode-bar{background:linear-gradient(135deg,#fff9e6,#fff3cc);border:2px solid var(--gold);
+  border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:16px;}
+.qmode-label{font-size:11px;font-weight:700;color:var(--org);text-transform:uppercase;letter-spacing:1px;}
+.qmode-btns{display:flex;gap:6px;}
+.qmb{padding:7px 14px;border-radius:20px;border:1.5px solid var(--bdr);background:#fff;
+  font-size:11px;font-weight:700;cursor:pointer;font-family:'Segoe UI',sans-serif;transition:all 0.2s;}
+.qmb.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.qmode-display{font-size:12px;font-weight:700;color:var(--blue);margin-left:auto;}
+
+.ql-container{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:start;}
+
+.dtype-row{display:flex;gap:8px;margin-bottom:14px;}
+.dtb{flex:1;padding:9px;border:2px solid var(--bdr);border-radius:8px;background:#fff;
+  font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s;font-family:'Segoe UI',sans-serif;}
+.dtb.aq{border-color:var(--blue);background:var(--blue-lt);color:var(--blue);}
+.dtb.ai{border-color:var(--grn);background:var(--grn-lt);color:var(--grn);}
+
+.prod-item{background:var(--s2);border:1px solid var(--bdr);border-radius:9px;padding:11px;margin-bottom:8px;}
+.pi-name{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:7px;}
+.pi-g{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px;}
+.pi-inp{background:#fff;border:1px solid var(--bdr);border-radius:6px;
+  padding:5px 8px;font-size:11px;width:100%;font-family:'Segoe UI',sans-serif;}
+.pi-del{background:var(--red-lt);border:none;color:var(--red);width:26px;height:26px;
+  border-radius:6px;cursor:pointer;font-size:14px;align-self:end;}
+
+.labour-box{background:var(--org-lt);border:1.5px solid #FFB74D;border-radius:10px;padding:13px;margin-bottom:12px;}
+.labour-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:0;}
+.labour-hdr span{font-size:12px;font-weight:700;color:var(--org);}
+.lbr-item{background:#fff;border:1px solid #FFB74D;border-radius:7px;padding:9px;margin-top:8px;}
+.lbr-g{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:7px;align-items:end;}
+.add-prod-btn{width:100%;padding:9px;background:var(--blue-lt);border:2px dashed var(--blue);
+  border-radius:8px;color:var(--blue);font-size:11px;font-weight:700;cursor:pointer;margin-bottom:10px;font-family:'Segoe UI',sans-serif;}
+
+/* ---- QUOTATION PREVIEW ---- */
+.qprev{background:#fff;border:1px solid var(--bdr);border-radius:12px;
+  overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);}
+.qph{background:linear-gradient(135deg,var(--blue),var(--blue2));padding:16px 18px;
+  display:flex;align-items:center;justify-content:space-between;}
+.qph-left{display:flex;align-items:center;gap:10px;}
+.qph-logo{background:rgba(255,255,255,0.15);border-radius:8px;width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.qph-logo img{width:100%;height:100%;object-fit:contain;}
+.qph-logo-text{font-size:12px;font-weight:800;color:#fff;}
+.qph-co{color:#fff;}
+.qph-co h3{font-size:12px;font-weight:700;}
+.qph-co p{font-size:9px;color:rgba(255,255,255,0.75);margin-top:1px;}
+.qph-badge{background:rgba(255,255,255,0.2);color:#fff;padding:6px 14px;
+  border-radius:20px;font-size:11px;font-weight:700;text-align:center;}
+.qp-meta{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--bdr);}
+.qpm-l{padding:12px 16px;border-right:1px solid var(--bdr);}
+.qpm-r{padding:12px 16px;text-align:right;}
+.qml{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+.qmv{font-size:11px;font-weight:700;color:var(--txt);}
+.qmv.hl{color:var(--blue);font-size:12px;}
+
+/* TABLE */
+.qt{width:100%;border-collapse:collapse;font-size:11px;}
+.qt th{background:#f0f7ff;padding:8px 10px;font-size:9px;color:var(--blue);
+  text-transform:uppercase;font-weight:700;text-align:left;border-bottom:2px solid var(--blue-lt);}
+.qt td{padding:7px 10px;border-bottom:1px solid #f0f0f0;vertical-align:top;}
+.qt tr:last-child td{border-bottom:none;}
+.mrp-x{text-decoration:line-through;color:var(--muted);font-size:9px;}
+.rate-v{color:var(--grn);font-weight:700;}
+.save-chip{background:var(--grn-lt);color:var(--grn);padding:1px 6px;
+  border-radius:8px;font-size:8px;font-weight:700;}
+.dealer-col{color:var(--blue);font-weight:700;}
+.ec-col{color:var(--org);font-weight:700;}
+.mrp-col{color:var(--red);font-weight:700;}
+.labour-row td{background:var(--org-lt);}
+
+.tot-section{padding:12px 16px;background:var(--s2);border-top:2px solid var(--blue-lt);}
+.tot-row{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;}
+.tot-row.grand{font-size:14px;font-weight:800;color:var(--blue);background:var(--blue-lt);
+  padding:8px 10px;border-radius:8px;margin-top:6px;}
+.save-banner{background:var(--grn-lt);border:1px solid #A5D6A7;border-radius:8px;
+  padding:8px 14px;margin:8px 16px;display:flex;justify-content:space-between;align-items:center;}
+.bank-section{padding:10px 16px;background:var(--blue-lt);border-top:1px solid var(--bdr);display:none;}
+.bank-title{font-size:9px;font-weight:700;color:var(--blue);text-transform:uppercase;margin-bottom:5px;}
+.sign-row{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--bdr);}
+.sign-box{padding:10px 16px;text-align:center;}
+.sign-box:first-child{border-right:1px solid var(--bdr);}
+.sign-line{border-top:1.5px solid #333;width:70%;margin:30px auto 5px;}
+.sign-name{font-size:10px;font-weight:700;}
+.sign-role{font-size:9px;color:var(--muted);}
+.tc-box{padding:10px 16px;background:var(--gold-lt);border-top:1px solid #FFF176;}
+.tc-title{font-size:9px;font-weight:700;color:var(--org);text-transform:uppercase;margin-bottom:4px;}
+.tc-text{font-size:9px;color:var(--muted);line-height:1.7;}
+.print-row{padding:12px 16px;display:flex;gap:7px;border-top:1px solid var(--bdr);}
+
+/* ---- ADMIN ---- */
+.admin-product{background:#fff;border:1px solid var(--bdr);border-radius:10px;
+  margin-bottom:12px;overflow:hidden;}
+.admin-prod-hdr{background:var(--blue-lt);padding:10px 16px;display:flex;
+  align-items:center;justify-content:space-between;cursor:pointer;}
+.admin-prod-hdr h4{font-size:12px;font-weight:700;color:var(--blue);}
+.admin-pack-table{width:100%;border-collapse:collapse;font-size:11px;}
+.admin-pack-table th{background:#f8fafc;padding:7px 12px;font-size:10px;color:var(--muted);
+  text-align:left;font-weight:700;border-bottom:1px solid var(--bdr);}
+.admin-pack-table td{padding:7px 10px;border-bottom:1px solid #f0f0f0;}
+.admin-inp{width:90px;padding:4px 7px;border:1.5px solid var(--bdr);border-radius:5px;
+  font-size:11px;text-align:right;font-family:'Segoe UI',sans-serif;}
+.admin-inp:focus{border-color:var(--blue);outline:none;}
+.status-complete{color:var(--grn);font-size:10px;font-weight:700;}
+.status-incomplete{color:var(--org);font-size:10px;font-weight:700;}
+
+/* ---- MODAL ---- */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;}
+.mov.show{display:flex;}
+.modal{background:#fff;border-radius:16px;padding:24px;width:90%;max-width:500px;
+  max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.mt{font-size:15px;font-weight:700;margin-bottom:14px;}
+.mc{float:right;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
+
+/* ---- PRINT ---- */
+@media print{
+  body{background:#fff;}
+  #app>*:not(#pq){display:none!important;}
+  #pq{display:block!important;}
+  .noprint{display:none!important;}
+  @page{size:A4;margin:14mm;}
+}
+#pq{display:none;}
+.pq-page{padding:0;}
+.pq-hdr{display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:18px;padding-bottom:14px;border-bottom:3px solid #0C447C;}
+.pq-logo-area{display:flex;align-items:center;gap:10px;}
+.pq-logo{width:50px;height:50px;border-radius:8px;background:#E3F2FD;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.pq-logo img{width:100%;height:100%;object-fit:contain;}
+.pq-logo-txt{font-size:13px;font-weight:800;color:#0C447C;}
+.pq-company{font-size:10px;color:#444;line-height:1.6;}
+.pq-company h2{font-size:16px;font-weight:800;color:#0C447C;margin-bottom:2px;}
+.pq-right{text-align:right;}
+.pq-doctype{font-size:24px;font-weight:900;color:#0C447C;}
+.pq-num{font-size:11px;color:#666;margin-top:3px;}
+.pq-customer{background:#E3F2FD;border-radius:8px;padding:12px;margin-bottom:14px;
+  display:grid;grid-template-columns:1fr 1fr;}
+.pq-ct{font-size:9px;color:#0C447C;font-weight:700;text-transform:uppercase;margin-bottom:3px;}
+.pq-cv{font-size:11px;color:#333;font-weight:600;}
+.pq-table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:10px;}
+.pq-table th{background:#0C447C;color:#fff;padding:7px 8px;text-align:left;font-size:9px;}
+.pq-table td{padding:7px 8px;border-bottom:1px solid #f0f0f0;}
+.pq-table tr:last-child td{border-bottom:none;}
+.pq-tot-section{margin-bottom:12px;}
+.pq-tot-row{display:flex;justify-content:flex-end;gap:40px;font-size:11px;padding:3px 0;}
+.pq-tot-grand{font-size:16px;font-weight:800;color:#0C447C;background:#E3F2FD;
+  padding:8px 14px;border-radius:8px;display:flex;justify-content:space-between;margin-top:6px;}
+.pq-save{background:#E8F5E9;border:1px solid #A5D6A7;border-radius:7px;padding:8px 14px;
+  display:flex;justify-content:space-between;margin-bottom:12px;font-size:11px;}
+.pq-bank{background:#E3F2FD;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:10px;line-height:1.7;}
+.pq-bank h4{font-size:10px;font-weight:700;color:#0C447C;margin-bottom:4px;text-transform:uppercase;}
+.pq-sign-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:12px;}
+.pq-sign-box{text-align:center;}
+.pq-sign-line{border-top:1.5px solid #333;width:70%;margin:35px auto 6px;}
+.pq-tc{background:#FFFDE7;border-radius:7px;padding:10px 14px;font-size:9px;color:#666;line-height:1.7;}
+.pq-tc h5{font-size:9px;font-weight:700;color:#E65100;margin-bottom:4px;text-transform:uppercase;}
+.pq-footer{text-align:center;font-size:9px;color:#aaa;margin-top:12px;padding-top:10px;border-top:1px solid #eee;}
+
+/* UTILS */
+.abr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.st{font-size:17px;font-weight:700;}
+.ss{font-size:11px;color:var(--muted);margin-top:2px;}
+.div{height:1px;background:var(--bdr);margin:14px 0;}
+.empty{text-align:center;padding:40px;color:var(--muted);}
+.empty .ei{font-size:40px;margin-bottom:10px;}
+.empty .et{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:5px;}
+.al{padding:9px 13px;border-radius:8px;font-size:11px;margin-bottom:10px;}
+.al-i{background:var(--blue-lt);border:1px solid #90CAF9;color:var(--blue);}
+.al-w{background:var(--org-lt);border:1px solid #FFB74D;color:var(--org);}
+.al-s{background:var(--grn-lt);border:1px solid #A5D6A7;color:var(--grn);}
+
+@media(max-width:768px){
+  .ql-container{grid-template-columns:1fr;}
+  .g2,.g3,.pgrid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="lcard">
+    <div class="llogo">🏗️ AMITEK TOOLS</div>
+    <div class="lsub">APP Paint Chemicals Pvt. Ltd. | Internal Tool</div>
+    <input type="password" id="pwd" class="linp" placeholder="••••••••" onkeypress="if(event.key==='Enter')doLogin()">
+    <button class="lbtn" onclick="doLogin()">🔐 Enter</button>
+    <div class="lerr" id="lerr">❌ Incorrect password</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="nav">
+    <div class="nav-left">
+      <div class="nav-logo">
+        <img src="Amitek.png" id="navLogoImg" alt="Amitek" onerror="this.style.display='none';document.getElementById('navLogoTxt').style.display='block'">
+        <span id="navLogoTxt" style="display:none">AMITEK</span>
+      </div>
+      <div class="nav-info">
+        <div style="color:#fff;font-weight:700;font-size:13px;">Amitek Business Tools</div>
+        <div id="navDate"></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="color:rgba(255,255,255,0.8);font-size:11px;text-align:right;">
+        Sourabh Bairwa<br><span style="color:rgba(255,255,255,0.6);">Senior WP Consultant</span>
+      </div>
+      <button class="nav-out" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tb active" onclick="showTab('cat',this)">📖 Catalogue</button>
+    <button class="tb" onclick="showTab('quot',this)">🧾 Quotation / Invoice</button>
+    <button class="tb" onclick="showTab('admin',this)">⚙️ Admin — Update Prices</button>
+  </div>
+  <div class="tc">
+
+    <!-- ==== CATALOGUE ==== -->
+    <div class="tp active" id="tp-cat">
+      <div class="cat-hdr">
+        <div>
+          <h2>📖 Amitek Product Catalogue</h2>
+          <p>APP Paint Chemicals Pvt. Ltd. | Waterproofing & Seamless Flooring Solutions</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-org" onclick="printCat()">🖨️ Print Catalogue PDF</button>
+        </div>
+      </div>
+      <div class="cf">
+        <button class="cfb active" onclick="filterCat('all',this)">All</button>
+        <button class="cfb" onclick="filterCat('Nano Pore',this)">Nano Pore</button>
+        <button class="cfb" onclick="filterCat('Cementitious',this)">Cementitious</button>
+        <button class="cfb" onclick="filterCat('Elastomeric',this)">Elastomeric</button>
+        <button class="cfb" onclick="filterCat('Roof Cool',this)">Roof Cool</button>
+        <button class="cfb" onclick="filterCat('Integral',this)">Integral</button>
+        <button class="cfb" onclick="filterCat('PU System',this)">PU System</button>
+      </div>
+      <div class="pgrid" id="pgrid"></div>
+    </div>
+
+    <!-- ==== QUOTATION ==== -->
+    <div class="tp" id="tp-quot">
+      <!-- SECRET PRICE MODE BAR -->
+      <div class="qmode-bar">
+        <div>
+          <div class="qmode-label">🔐 Price Mode (Only You See This)</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Select pricing tier — client will not see this label on PDF</div>
+        </div>
+        <div class="qmode-btns">
+          <button class="qmb" onclick="setMode('dealer',this)">Dealer</button>
+          <button class="qmb active" onclick="setMode('project',this)">Project</button>
+          <button class="qmb" onclick="setMode('endclient',this)">End Client</button>
+        </div>
+        <div class="qmode-display" id="modeDisplay">📊 PROJECT PRICE</div>
+      </div>
+
+      <div class="ql-container">
+        <!-- LEFT: FORM -->
+        <div>
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch">📋 Document Type</div>
+            <div class="dtype-row">
+              <button class="dtb aq" id="dtq" onclick="setDocType('q')">🧾 QUOTATION</button>
+              <button class="dtb" id="dti" onclick="setDocType('i')">🧾 INVOICE</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch">👤 Customer Details</div>
+            <div class="g2">
+              <div class="fg"><label>Customer / Company Name *</label>
+                <input id="qcn" placeholder="e.g. Rajesh Builders Pvt. Ltd." oninput="upPrev()"></div>
+              <div class="fg"><label>Contact Person</label>
+                <input id="qcp" placeholder="Person name" oninput="upPrev()"></div>
+              <div class="fg"><label>Phone</label>
+                <input id="qph" placeholder="+91 9XXXXXXXXX"></div>
+              <div class="fg"><label>City</label>
+                <input id="qct2" placeholder="Jaipur"></div>
+            </div>
+            <div class="fg"><label>Site / Project Name</label>
+              <input id="qsite" placeholder="e.g. Green Valley Residency, Kukas"></div>
+            <div class="fg"><label>Customer GST (Optional)</label>
+              <input id="qgst" placeholder="Customer GST if available"></div>
+            <div class="g2">
+              <div class="fg"><label>Date</label><input type="date" id="qdate"></div>
+              <div class="fg"><label>Valid Until</label><input type="date" id="qvalid"></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch">📦 Add Products</div>
+            <div class="fg"><label>Select Product</label>
+              <select id="qpsel" onchange="updPacks()">
+                <option value="">-- Select Product --</option>
+              </select>
+            </div>
+            <div class="g2">
+              <div class="fg"><label>Pack Size</label>
+                <select id="qpksel"><option value="">-- Select Pack --</option></select>
+              </div>
+              <div class="fg"><label>Area (sqft) → auto qty</label>
+                <input type="number" id="qarea" placeholder="e.g. 500" oninput="calcQty()">
+              </div>
+            </div>
+            <div class="fg"><label>Qty (Packs) — or enter manually</label>
+              <input type="number" id="qqty" placeholder="e.g. 5" min="1" oninput="calcArea2()">
+            </div>
+            <div id="qcalc" class="al al-i" style="display:none;"></div>
+            <button class="btn btn-blue btn-w" onclick="addProd()">➕ Add Product</button>
+          </div>
+
+          <!-- LABOUR -->
+          <div class="card" style="margin-bottom:14px;">
+            <div class="ch">
+              👷 Labour / Application Charges
+              <span style="font-size:10px;font-weight:400;color:var(--muted);margin-left:8px;">(Optional)</span>
+            </div>
+            <div class="al al-w" style="font-size:10px;">Enter area-wise rates manually as per project scope</div>
+            <div id="labourList"></div>
+            <button class="btn btn-org btn-w" onclick="addLabour()">➕ Add Labour Row</button>
+          </div>
+
+          <!-- PREPARED BY -->
+          <div class="card">
+            <div class="ch">✍️ Prepared By</div>
+            <div class="g2">
+              <div class="fg"><label>Name</label><input id="preBy" value="Sourabh Bairwa"></div>
+              <div class="fg"><label>Designation</label><input id="preDes" value="Senior Waterproofing Consultant"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: PREVIEW -->
+        <div class="qprev">
+          <!-- Header -->
+          <div class="qph">
+            <div class="qph-left">
+              <div class="qph-logo">
+                <img src="Amitek.png" alt="Amitek" onerror="this.parentNode.innerHTML='<span class=qph-logo-txt>A</span>'">
+              </div>
+              <div class="qph-co">
+                <h3>APP Paint Chemicals Pvt. Ltd.</h3>
+                <p>GST: 08AAUCA9834F1Z4 | Amitek Smart Group</p>
+                <p>+91 92515 54682 | sales@amitekseamlessfloorings.com</p>
+              </div>
+            </div>
+            <div class="qph-badge" id="prevBadge">QUOTATION</div>
+          </div>
+          <!-- Meta -->
+          <div class="qp-meta">
+            <div class="qpm-l">
+              <div class="qml">Customer</div>
+              <div class="qmv hl" id="pvCN">—</div>
+              <div class="qmv" style="font-size:10px;color:var(--muted);margin-top:2px;" id="pvCP"></div>
+              <div style="margin-top:8px;"><div class="qml">Site / Project</div>
+              <div class="qmv" id="pvSite">—</div></div>
+            </div>
+            <div class="qpm-r">
+              <div class="qml">Document No.</div>
+              <div class="qmv hl" id="pvDocNum">AMITEK-Q-2026-001</div>
+              <div style="margin-top:6px;"><div class="qml">Date</div>
+              <div class="qmv" id="pvDate">—</div></div>
+              <div style="margin-top:6px;"><div class="qml">Valid Until</div>
+              <div class="qmv" style="color:var(--org);" id="pvValid">—</div></div>
+            </div>
+          </div>
+
+          <!-- Product Table -->
+          <div style="overflow-x:auto;">
+            <table class="qt" id="qTable">
+              <thead id="qThead"></thead>
+              <tbody id="qTbody">
+                <tr><td colspan="8" class="empty" style="padding:24px;">
+                  <div class="ei">📦</div>
+                  <div class="et">Add products to see preview</div>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Savings -->
+          <div class="save-banner" id="saveBanner" style="display:none;">
+            <span style="font-size:11px;font-weight:700;color:var(--grn);">🎉 Total Savings vs MRP</span>
+            <span style="font-size:16px;font-weight:800;color:var(--grn);" id="totalSave">₹0</span>
+          </div>
+
+          <!-- Totals -->
+          <div class="tot-section" id="totSection" style="display:none;">
+            <div class="tot-row"><span>Sub Total (Material)</span><span id="totSub">₹0</span></div>
+            <div class="tot-row"><span>Labour Charges</span><span id="totLabour">₹0</span></div>
+            <div class="tot-row"><span>GST @ 18%</span><span id="totGST">₹0</span></div>
+            <div class="tot-row grand"><span>GRAND TOTAL</span><span id="totGrand">₹0</span></div>
+          </div>
+
+          <!-- Bank (Invoice only) -->
+          <div class="bank-section" id="bankSection">
+            <div class="bank-title">💳 Bank Details</div>
+            <div style="font-size:10px;color:#444;line-height:1.8;">
+              Bank: <b>Union Bank</b> | A/C Holder: <b>APP Paints Chemicals Private Limited</b><br>
+              A/C No: <b>510605010060598</b> | IFSC: <b>UBIN0551066</b><br>
+              Branch: <b>SSI Finance, Jaipur</b> | Type: <b>Current Account</b>
+            </div>
+          </div>
+
+          <!-- Signature -->
+          <div class="sign-row">
+            <div class="sign-box">
+              <div class="sign-line"></div>
+              <div class="sign-name" id="pvBy">Sourabh Bairwa</div>
+              <div class="sign-role" id="pvDes">Senior Waterproofing Consultant</div>
+              <div class="sign-role">APP Paint Chemicals Pvt. Ltd.</div>
+            </div>
+            <div class="sign-box">
+              <div class="sign-line"></div>
+              <div class="sign-name">Customer Acceptance</div>
+              <div class="sign-role">Signature & Stamp</div>
+            </div>
+          </div>
+
+          <!-- T&C -->
+          <div class="tc-box">
+            <div class="tc-title">Terms & Conditions</div>
+            <div class="tc-text">
+              1. Valid for 30 days from issue date. &nbsp;|&nbsp; 2. Prices subject to change without prior notice. &nbsp;|&nbsp;
+              3. Coverage is indicative; actual may vary based on site conditions. &nbsp;|&nbsp;
+              4. Cement, fiber mesh, surface prep & labour extra unless specified. &nbsp;|&nbsp;
+              5. GST @ 18% applicable on all products. &nbsp;|&nbsp;
+              6. Payment: 40% Advance | 40% During Work | 20% on Completion. &nbsp;|&nbsp;
+              7. Water & electricity by client. Scaffolding by client. &nbsp;|&nbsp;
+              8. Jurisdiction: Jaipur courts only.
+            </div>
+          </div>
+
+          <!-- Print Buttons -->
+          <div class="print-row noprint">
+            <button class="btn btn-blue" style="flex:1;" onclick="doPrint()">🖨️ Print / PDF</button>
+            <button class="btn btn-grn" style="flex:1;" onclick="doWhatsApp()">💬 WhatsApp Share</button>
+            <button class="btn btn-red" style="flex:1;" onclick="clearAll()">🗑️ Clear All</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==== ADMIN ==== -->
+    <div class="tp" id="tp-admin">
+      <div class="abr">
+        <div><div class="st">⚙️ Admin — Price Manager</div>
+          <div class="ss">Update product prices here — changes save automatically to browser storage</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-grn" onclick="saveAllPrices()">💾 Save All Changes</button>
+          <button class="btn btn-ghost" onclick="resetPrices()">↺ Reset to Default</button>
+        </div>
+      </div>
+      <div class="al al-w">⚠️ Price changes are saved in your browser. If you clear browser data, prices reset to default. For permanent changes, update the source code.</div>
+      <div id="adminProds"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PRINT QUOTATION -->
+<div id="pq">
+  <div class="pq-page" style="padding:20px;">
+    <div class="pq-hdr">
+      <div class="pq-logo-area">
+        <div class="pq-logo">
+          <img src="Amitek.png" alt="Amitek" onerror="this.parentNode.innerHTML='<span style=font-size:12px;font-weight:800;color:#0C447C>A</span>'">
+        </div>
+        <div class="pq-company">
+          <h2>APP Paint Chemicals Pvt. Ltd.</h2>
+          <div>Part of Amitek Smart Group | Government Recognised Star Export House</div>
+          <div>14/120, Main 100 feet Shipra Path Road, Mansarovar, Jaipur - 302020</div>
+          <div>GST: 08AAUCA9834F1Z4 | +91 92515 54682 | sales@amitekseamlessfloorings.com</div>
+          <div>www.amitekinfra.com | www.amitekseamlessfloorings.com</div>
+        </div>
+      </div>
+      <div class="pq-right">
+        <div class="pq-doctype" id="pqDocType">QUOTATION</div>
+        <div class="pq-num" id="pqNum"></div>
+        <div class="pq-num" id="pqDate"></div>
+        <div class="pq-num" id="pqValid"></div>
+      </div>
+    </div>
+
+    <div class="pq-customer">
+      <div>
+        <div class="pq-ct">Customer / Bill To</div>
+        <div class="pq-cv" id="pqCustName"></div>
+        <div style="font-size:10px;color:#444;" id="pqCustCont"></div>
+        <div style="font-size:10px;color:#444;" id="pqCustGST"></div>
+      </div>
+      <div>
+        <div class="pq-ct">Site / Project</div>
+        <div class="pq-cv" id="pqSite"></div>
+        <div class="pq-ct" style="margin-top:8px;">Subject</div>
+        <div style="font-size:10px;color:#333;" id="pqSubject">Waterproofing Material Supply & Application</div>
+      </div>
+    </div>
+
+    <table class="pq-table" id="pqTable">
+      <thead id="pqThead"></thead>
+      <tbody id="pqTbody"></tbody>
+    </table>
+
+    <div class="pq-save" id="pqSaveBanner">
+      <span style="font-weight:700;color:#1B5E20;">🎉 Your Total Savings vs MRP</span>
+      <span style="font-size:16px;font-weight:800;color:#1B5E20;" id="pqSaveAmt"></span>
+    </div>
+
+    <div class="pq-tot-section">
+      <div class="pq-tot-row"><span>Sub Total (Material)</span><span id="pqSub"></span></div>
+      <div class="pq-tot-row"><span>Labour Charges</span><span id="pqLab"></span></div>
+      <div class="pq-tot-row"><span>GST @ 18% (on material)</span><span id="pqGST"></span></div>
+      <div class="pq-tot-grand"><span>GRAND TOTAL</span><span id="pqGrand"></span></div>
+    </div>
+
+    <div class="pq-bank" id="pqBank" style="display:none;">
+      <h4>💳 Bank Details for Payment</h4>
+      Bank: <b>Union Bank</b> | A/C Holder: <b>APP Paints Chemicals Private Limited</b> |
+      A/C No: <b>510605010060598</b> | IFSC: <b>UBIN0551066</b> | Branch: <b>SSI Finance, Jaipur</b> | Type: <b>Current Account</b>
+    </div>
+
+    <div style="margin-bottom:8px;font-size:10px;color:#555;line-height:1.7;background:#f9f9f9;border-radius:7px;padding:10px 14px;">
+      <b style="color:#333;">Note:</b> Any extra work will be chargeable separately.
+      Water and electricity to be provided by client. Scaffolding to be provided by client side on site.
+    </div>
+
+    <div class="pq-sign-row">
+      <div class="pq-sign-box">
+        <div class="pq-sign-line"></div>
+        <div style="font-size:11px;font-weight:700;" id="pqBy"></div>
+        <div style="font-size:10px;color:#666;" id="pqDes"></div>
+        <div style="font-size:10px;color:#666;">APP Paint Chemicals Pvt. Ltd.</div>
+      </div>
+      <div class="pq-sign-box">
+        <div class="pq-sign-line"></div>
+        <div style="font-size:11px;font-weight:700;">Customer Acceptance</div>
+        <div style="font-size:10px;color:#666;">Signature & Stamp</div>
+      </div>
+    </div>
+
+    <div class="pq-tc">
+      <h5>Terms & Conditions</h5>
+      1. Valid for 30 days from issue date. &nbsp;|&nbsp; 2. Prices subject to change without prior notice. &nbsp;|&nbsp;
+      3. Coverage is indicative; actual consumption may vary based on surface roughness, porosity and application method. &nbsp;|&nbsp;
+      4. Cement, fiber mesh, surface preparation & labour charges are extra unless specified herein. &nbsp;|&nbsp;
+      5. GST @ 18% applicable on all products. Payment: Cheques in favour of "APP Paint Chemicals Pvt. Ltd." &nbsp;|&nbsp;
+      6. Payment Terms: 40% Advance | 40% During Work | 20% on Completion. &nbsp;|&nbsp;
+      7. Water & electricity by client. Scaffolding by client on site. Any extra work chargeable. &nbsp;|&nbsp;
+      8. Goods once sold not returnable unless defective. Jurisdiction: Jaipur courts only.
+    </div>
+
+    <div class="pq-footer">
+      APP Paint Chemicals Pvt. Ltd. | www.amitekinfra.com | www.amitekseamlessfloorings.com | +91 92515 54682
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="mov" id="imgModal">
+  <div class="modal">
+    <button class="mc" onclick="closeM('imgModal')">✕</button>
+    <div class="mt">🖼️ Edit Product Media</div>
+    <input type="hidden" id="eim_id">
+    <div class="fg"><label>Product</label><input id="eim_name" disabled style="opacity:0.6;"></div>
+    <div class="fg"><label>Image URL (from GitHub repo or any link)</label>
+      <input id="eim_img" placeholder="Amitek_HMC501.png or https://...">
+    </div>
+    <div class="fg"><label>TDS PDF URL (from GitHub repo)</label>
+      <input id="eim_tds" placeholder="TDS_HMC501.pdf or https://...">
+    </div>
+    <div class="fg"><label>Video URL (YouTube / Drive)</label>
+      <input id="eim_vid" placeholder="https://youtube.com/...">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button class="btn btn-blue" style="flex:1;" onclick="saveMedia()">💾 Save</button>
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeM('imgModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="mov" id="pdModal">
+  <div class="modal" style="max-width:640px;max-height:90vh;">
+    <button class="mc" onclick="closeM('pdModal')">✕</button>
+    <div id="pdCont"></div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// PRODUCT DATA — 5 COMPLETE + 4 INCOMPLETE
+// ================================================================
+const PRODS_DEFAULT = [
+  // ---- 5 COMPLETE PRODUCTS ----
+  {id:'HWR22',complete:true,cat:'Nano Pore',cc:'#0C447C',
+   name:'Amitek Nanopore Sealing HWR-22 (Part A)',sn:'HWR-22 (Part A)',hsn:'29319090',
+   note:'Use WITH CMP-78 | Ratio 1:2:20 (HWR22:CMP78:Water)',
+   app:'Roof, terraces, parapet walls, external walls, concrete structures, balconies, podium slabs, water tanks.',
+   img:'',tds:'',vid:'',
+   packs:[
+     {kg:1, cov:385.96,dp:925.00,   pp:1156.25,ep:1651.79,mrp:2359.69},
+     {kg:5, cov:385.96,dp:912.50,   pp:1140.63,ep:1629.46,mrp:2327.81},
+     {kg:20,cov:385.96,dp:882.50,   pp:1103.13,ep:1575.89,mrp:2251.28}
+   ]},
+  {id:'CMP78',complete:true,cat:'Nano Pore',cc:'#0C447C',
+   name:'Amitek Nanopore Sealing CMP-78 (Part B)',sn:'CMP-78 (Part B)',hsn:'38244010',
+   note:'Use WITH HWR-22 | Ratio 1:2:20 (HWR22:CMP78:Water)',
+   app:'Roof terraces, sunken portions, bathrooms, balconies, concrete repair, bonding primer on walls & slabs.',
+   img:'',tds:'',vid:'',
+   packs:[
+     {kg:1, cov:215.69,dp:235.29,  pp:276.82, ep:325.67,mrp:465.24},
+     {kg:5, cov:215.69,dp:210.08,  pp:247.16, ep:290.77,mrp:415.39},
+     {kg:20,cov:215.69,dp:210.08,  pp:247.16, ep:290.77,mrp:415.39}
+   ]},
+  {id:'HMC501',complete:true,cat:'Cementitious',cc:'#1B5E20',
+   name:'Amitek Cementitious Film Forming HMC-501',sn:'HMC-501',hsn:'',
+   note:'Mix with grey cement | Ratio: 1L HMC-501 : 0.75kg Cement : 0.2L Water',
+   app:'Ideal under tiles: Roof terraces, balconies, bathrooms, wet areas, external walls, overhead water tank, podium decks.',
+   img:'',tds:'',vid:'',
+   packs:[
+     {kg:4, cov:14.09,dp:187.50,   pp:234.38, ep:275.74,mrp:393.91},
+     {kg:20,cov:14.09,dp:175.00,   pp:218.75, ep:257.35,mrp:367.65}
+   ]},
+  {id:'SDSHIELD',complete:true,cat:'Elastomeric',cc:'#E65100',
+   name:'Amitek Smart Duo Shield Damproof',sn:'Smart Duo Shield',hsn:'32141000',
+   note:'Fiber reinforced | 7 bar hydrostatic pressure | 10-12°C temperature reduction',
+   app:'UV Stable: Residential terraces, roof slabs, balconies, chhajjas, parapet walls, toilets, external walls.',
+   img:'',tds:'',vid:'',
+   packs:[
+     {kg:1, cov:8.00, dp:168.17,   pp:186.85, ep:207.62,mrp:296.59},
+     {kg:4, cov:8.00, dp:151.35,   pp:168.17, ep:186.85,mrp:266.93},
+     {kg:20,cov:8.00, dp:151.35,   pp:168.17, ep:186.85,mrp:266.93}
+   ]},
+  {id:'TSPRO',complete:true,cat:'Elastomeric',cc:'#E65100',
+   name:'Amitek TransShield Pro (Transparent WP)',sn:'TransShield Pro',hsn:'32141000',
+   note:'Highly durable transparent solution | Ideal over existing tiles',
+   app:'Over tiles transparent waterproofing, terrace, bathrooms, kitchen, wet walls, basement, sunken portions.',
+   img:'',tds:'',vid:'',
+   packs:[
+     {kg:4, cov:49.02,dp:371.11,   pp:463.89, ep:579.86,mrp:828.37},
+     {kg:10,cov:49.02,dp:324.44,   pp:405.56, ep:506.94,mrp:724.21},
+     {kg:20,cov:49.02,dp:306.67,   pp:383.33, ep:479.17,mrp:684.52}
+   ]},
+  // ---- 4 INCOMPLETE PRODUCTS (updateable via admin) ----
+  {id:'COOLROOF',complete:false,cat:'Roof Cool',cc:'#6A1B9A',
+   name:'Amitek Cool Roof System',sn:'Cool Roof',hsn:'',
+   note:'10-12°C temperature reduction | UV & thermal protection — Contact for Project Price',
+   app:'Overhead tanks, concrete roofs, East-West external walls. Thermal insulator and UV barrier.',
+   img:'',tds:'',vid:'',
+   packs:[
+     {kg:1, cov:33.00,dp:487.78,   pp:null,   ep:549.00, mrp:593.00},
+     {kg:5, cov:33.00,dp:391.11,   pp:null,   ep:439.80, mrp:559.00},
+     {kg:10,cov:33.00,dp:351.11,   pp:null,   ep:350.00, mrp:533.00},
+     {kg:25,cov:33.00,dp:333.33,   pp:null,   ep:375.00, mrp:508.00}
+   ]},
+  {id:'CRETEBOND',complete:false,cat:'Integral',cc:'#37474F',
+   name:'Amitek Crete Bond (Cementitious Integral)',sn:'Crete Bond',hsn:'38244010',
+   note:'1% of cement qty | Phenolic acrylate binder | Contact for pricing details',
+   app:'Integral waterproofing additive for concrete, PCC, plaster, mortars. All cement types compatible.',
+   img:'',tds:'',vid:'',
+   packs:[
+     {kg:1, cov:null,dp:311.10,    pp:null,   ep:350.00, mrp:500.00},
+     {kg:5, cov:null,dp:178.00,    pp:null,   ep:200.00, mrp:285.71},
+     {kg:10,cov:null,dp:168.00,    pp:null,   ep:189.00, mrp:270.00},
+     {kg:25,cov:null,dp:160.00,    pp:null,   ep:180.00, mrp:257.00}
+   ]},
+  {id:'PU2022',complete:false,cat:'PU System',cc:'#B71C1C',
+   name:'Amitek Solvent Base PU 2022 (Single Component)',sn:'PU 2022',hsn:'39095000',
+   note:'Highly permanent | Single component | High UV resistance',
+   app:'Roof waterproofing, terrace, podium decks, balconies, bathrooms, kitchens, basements.',
+   img:'',tds:'',vid:'',
+   packs:[
+     {kg:20,cov:4.68, dp:304.09,   pp:434.42, ep:482.69, mrp:689.55}
+   ]},
+  {id:'EPXPRIM',complete:false,cat:'PU System',cc:'#B71C1C',
+   name:'Amitek Hybrid Epoxy Primer (Two Component)',sn:'Epoxy Primer',hsn:'39089000',
+   note:'Two component | Use before PU 2022 application',
+   app:'Primer for solvent base PU waterproofing on all concrete and masonry surfaces.',
+   img:'',tds:'',vid:'',
+   packs:[
+     {kg:20,cov:59.20,dp:602.34,   pp:860.48, ep:956.09, mrp:1365.85}
+   ]}
+];
+
+// Load from localStorage or use defaults
+let PRODS = JSON.parse(localStorage.getItem('amkProds')||'null') || 
+  PRODS_DEFAULT.map(p=>({...p, packs:p.packs.map(pk=>({...pk}))}));
+// Restore non-price fields from defaults
+PRODS = PRODS.map((p,i)=>{
+  const d=PRODS_DEFAULT[i];
+  return {...d, packs: d.packs.map((dk,j)=>({...dk,...(p.packs[j]||{})}) )};
+});
+
+// Load media config from localStorage
+let mediaCfg = JSON.parse(localStorage.getItem('amkMedia')||'{}');
+PRODS.forEach(p=>{if(mediaCfg[p.id]){p.img=mediaCfg[p.id].img||'';p.tds=mediaCfg[p.id].tds||'';p.vid=mediaCfg[p.id].vid||'';}});
+
+// ================================================================
+// QUOTATION STATE
+// ================================================================
+let quotMode = 'project'; // dealer | project | endclient
+let docType = 'q';        // q | i
+let quotItems = [];
+let labourItems = [];
+let quotCounter = parseInt(localStorage.getItem('amkQC')||'0');
+
+// ================================================================
+// LOGIN
+// ================================================================
+function doLogin(){
+  if(document.getElementById('pwd').value==='amitek2026'){
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').style.display='block';
+    initApp();
+  }else{
+    const e=document.getElementById('lerr');e.style.display='block';
+    document.getElementById('pwd').value='';
+    setTimeout(()=>e.style.display='none',3000);
+  }
+}
+function doLogout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('login').style.display='flex';
+  document.getElementById('pwd').value='';
+}
+
+// ================================================================
+// INIT
+// ================================================================
+function initApp(){
+  const now=new Date();
+  document.getElementById('navDate').textContent=
+    now.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  const td=now.toISOString().split('T')[0];
+  const vd=new Date(now.getTime()+30*864e5).toISOString().split('T')[0];
+  document.getElementById('qdate').value=td;
+  document.getElementById('qvalid').value=vd;
+  popSelects();renderCat('all');renderAdmin();upPrev();setDocType('q');setMode('project',null);
+}
+
+function showTab(t,btn){
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('tp-'+t).classList.add('active');
+}
+
+// ================================================================
+// CATALOGUE
+// ================================================================
+function renderCat(f){
+  const g=document.getElementById('pgrid');
+  const list=f==='all'?PRODS:PRODS.filter(p=>p.cat===f);
+  if(!list.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">📦</div><div class="et">No products</div></div>';return;}
+  g.innerHTML=list.map(p=>{
+    const mrp=p.packs.length?'MRP ₹'+p.packs[0].mrp.toFixed(0)+'/kg':'Price on Request';
+    const imgH=p.img?`<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.innerHTML='<div class=pph><div class=i>🏗️</div><div class=t>Add Image</div></div>'">`:
+      `<div class="pph"><div class="i">🏗️</div><div class="t">${p.complete?'Add image URL':'Placeholder'}</div></div>`;
+    const chips=p.packs.map(pk=>`<span class="pchip">${pk.kg}kg</span>`).join('');
+    const badge=p.complete?'':'<span style="background:#FFF3E0;color:#E65100;padding:2px 7px;border-radius:6px;font-size:9px;font-weight:700;margin-left:6px;">Update Prices</span>';
+    return `<div class="pcard">
+      <div class="pimg">${imgH}
+        <span class="pcatbadge" style="background:${p.cc}cc;">${p.cat}</span>
+        <button class="peditbtn" onclick="openMedia('${p.id}')">✏️ Media</button>
+      </div>
+      <div class="pbody">
+        <div class="pname">${p.name}${badge}</div>
+        <div class="pnote">${p.note}</div>
+        ${p.packs.length?`<div class="pmrp">${mrp}</div><div class="ppacks">${chips}</div>`:`<div class="al al-w" style="font-size:10px;padding:6px 10px;margin-bottom:8px;">Contact for pricing</div>`}
+        <div class="pacts">
+          <button class="pbtn pbtn-tds" onclick="showPD('${p.id}')">📋 Details</button>
+          ${p.tds?`<a href="${p.tds}" target="_blank" class="pbtn pbtn-tds" style="text-decoration:none;text-align:center;">📄 TDS</a>`:`<button class="pbtn pbtn-tds" style="opacity:0.5;" onclick="openMedia('${p.id}')">📄 +TDS</button>`}
+          ${p.vid?`<button class="pbtn pbtn-v" onclick="window.open('${p.vid}','_blank')">▶ Video</button>`:`<button class="pbtn pbtn-v" style="opacity:0.5;" onclick="openMedia('${p.id}')">▶ +Video</button>`}
+          ${p.packs.length?`<button class="pbtn pbtn-q" onclick="quickAddToQuot('${p.id}')">+ Quote</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function filterCat(c,btn){
+  document.querySelectorAll('.cfb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  renderCat(c);
+}
+function printCat(){
+  const win=window.open('','_blank');
+  const d=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  const prodH=PRODS.map(p=>{
+    const pktbl=p.packs.length?`
+      <table style="width:100%;border-collapse:collapse;font-size:9px;">
+        <tr style="background:#0C447C;color:#fff;">
+          <th style="padding:4px 7px;">Pack</th>
+          <th style="padding:4px 7px;">Coverage/kg</th>
+          <th style="padding:4px 7px;">MRP/kg</th>
+          <th style="padding:4px 7px;">End Client/sqft</th>
+        </tr>
+        ${p.packs.map(pk=>`<tr style="border-bottom:1px solid #eee;">
+          <td style="padding:4px 7px;font-weight:700;">${pk.kg}kg</td>
+          <td style="padding:4px 7px;">${pk.cov?pk.cov.toFixed(1)+' sqft':'NA'}</td>
+          <td style="padding:4px 7px;font-weight:700;color:#0C447C;">₹${pk.mrp.toFixed(0)}</td>
+          <td style="padding:4px 7px;">${pk.ep&&pk.cov?'₹'+(pk.ep/pk.cov).toFixed(2):'NA'}</td>
+        </tr>`).join('')}
+      </table>`:
+      '<div style="font-size:9px;color:#666;padding:5px;">Contact Sourabh Bairwa +91 92515 54682 for pricing</div>';
+    return `<div style="break-inside:avoid;margin-bottom:12px;border:1px solid #ddd;border-radius:7px;overflow:hidden;">
+      <div style="background:${p.cc};color:#fff;padding:7px 11px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:700;font-size:11px;">${p.name}</span>
+        <span style="font-size:9px;background:rgba(255,255,255,0.2);padding:2px 7px;border-radius:8px;">${p.cat}</span>
+      </div>
+      <div style="padding:8px 11px;">
+        <div style="font-size:9px;color:#666;font-style:italic;margin-bottom:3px;">${p.note}</div>
+        <div style="font-size:9px;margin-bottom:6px;color:#333;"><b>Applications:</b> ${p.app}</div>
+        ${pktbl}
+      </div>
+    </div>`;
+  }).join('');
+  win.document.write(`<!DOCTYPE html><html><head><title>Amitek Catalogue — ${d}</title>
+    <style>body{font-family:Arial,sans-serif;margin:0;padding:18px;}
+    @page{size:A4;margin:12mm;}@media print{body{padding:0;}}</style></head><body>
+    <div style="text-align:center;margin-bottom:18px;padding-bottom:12px;border-bottom:3px solid #0C447C;">
+      <div style="font-size:24px;font-weight:800;color:#0C447C;">AMITEK INFRA</div>
+      <div style="font-size:11px;color:#666;">APP Paint Chemicals Pvt. Ltd. | Government Recognised Star Export House</div>
+      <div style="font-size:11px;color:#666;">14/120, Main 100 feet Shipra Path Road, Mansarovar, Jaipur - 302020</div>
+      <div style="font-size:12px;color:#0C447C;font-weight:700;margin-top:5px;">PRODUCT CATALOGUE — Waterproofing & Seamless Flooring Solutions</div>
+      <div style="font-size:10px;color:#666;">Date: ${d} | Sourabh Bairwa | +91 92515 54682 | sales@amitekseamlessfloorings.com</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">${prodH}</div>
+    <div style="margin-top:16px;padding-top:10px;border-top:1px solid #ddd;text-align:center;font-size:9px;color:#aaa;">
+      ⚠️ Coverage indicative. Labour, cement & surface prep extra. Prices subject to change. |
+      www.amitekinfra.com | www.amitekseamlessfloorings.com</div>
+    <script>window.print();<\/script></body></html>`);
+  win.document.close();
+}
+
+// MEDIA
+function openMedia(id){
+  const p=PRODS.find(x=>x.id===id);if(!p)return;
+  document.getElementById('eim_id').value=id;
+  document.getElementById('eim_name').value=p.name;
+  document.getElementById('eim_img').value=p.img||'';
+  document.getElementById('eim_tds').value=p.tds||'';
+  document.getElementById('eim_vid').value=p.vid||'';
+  openM('imgModal');
+}
+function saveMedia(){
+  const id=document.getElementById('eim_id').value;
+  const img=document.getElementById('eim_img').value.trim();
+  const tds=document.getElementById('eim_tds').value.trim();
+  const vid=document.getElementById('eim_vid').value.trim();
+  const p=PRODS.find(x=>x.id===id);
+  if(p){p.img=img;p.tds=tds;p.vid=vid;if(!mediaCfg[id])mediaCfg[id]={};
+    mediaCfg[id]={img,tds,vid};localStorage.setItem('amkMedia',JSON.stringify(mediaCfg));}
+  closeM('imgModal');
+  const ac=document.querySelector('.cfb.active');
+  const catMap={'All':'all','Nano Pore':'Nano Pore','Cementitious':'Cementitious',
+    'Elastomeric':'Elastomeric','Roof Cool':'Roof Cool','Integral':'Integral',
+    'PU System':'PU System'};
+  renderCat(catMap[ac?.textContent?.trim()]||'all');
+}
+
+function showPD(id){
+  const p=PRODS.find(x=>x.id===id);if(!p)return;
+  const tbl=p.packs.length?`
+    <div style="margin-top:12px;font-size:12px;font-weight:700;color:#0C447C;margin-bottom:7px;">Price Table (per kg)</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;">
+      <tr style="background:#E3F2FD;"><th style="padding:7px;">Pack</th><th>Coverage/kg</th>
+        <th style="color:#1B5E20;">Dealer</th><th style="color:#0C447C;">Project</th>
+        <th style="color:#E65100;">End Client</th><th style="color:#B71C1C;">MRP</th></tr>
+      ${p.packs.map(pk=>`<tr style="border-bottom:1px solid #f0f0f0;">
+        <td style="padding:6px;font-weight:700;">${pk.kg}kg</td>
+        <td style="padding:6px;">${pk.cov?pk.cov.toFixed(1)+' sqft':'NA'}</td>
+        <td style="padding:6px;color:#1B5E20;font-weight:700;">₹${pk.dp.toFixed(0)}</td>
+        <td style="padding:6px;color:#0C447C;font-weight:700;">${pk.pp?'₹'+pk.pp.toFixed(0):'NA'}</td>
+        <td style="padding:6px;color:#E65100;font-weight:700;">₹${pk.ep.toFixed(0)}</td>
+        <td style="padding:6px;color:#B71C1C;font-weight:700;">₹${pk.mrp.toFixed(0)}</td>
+      </tr>`).join('')}
+    </table>`:`<div class="al al-w" style="margin-top:10px;">Contact Sourabh for pricing.</div>`;
+  document.getElementById('pdCont').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div style="width:6px;height:36px;background:${p.cc};border-radius:3px;"></div>
+      <div><div style="font-size:14px;font-weight:700;">${p.name}</div>
+        <div style="font-size:11px;color:#666;">${p.cat} | HSN: ${p.hsn||'N/A'}</div>
+      </div>
+    </div>
+    ${p.img?`<img src="${p.img}" style="width:100%;height:150px;object-fit:cover;border-radius:10px;margin-bottom:10px;" onerror="this.style.display='none'">`:''}
+    <div class="al al-i" style="font-size:11px;margin-bottom:10px;">📝 ${p.note}</div>
+    <div style="font-size:11px;margin-bottom:8px;color:#555;"><b>Applications:</b> ${p.app}</div>
+    ${tbl}
+    <button class="btn btn-blue btn-w" style="margin-top:14px;" onclick="closeM('pdModal')">Close</button>`;
+  openM('pdModal');
+}
+
+// ================================================================
+// QUOTATION
+// ================================================================
+function setMode(m, btn){
+  quotMode=m;
+  if(btn){document.querySelectorAll('.qmb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+  const lbl={'dealer':'🤝 DEALER PRICE','project':'📊 PROJECT PRICE','endclient':'👤 END CLIENT PRICE'};
+  document.getElementById('modeDisplay').textContent=lbl[m];
+  renderQTable();
+}
+function setDocType(t){
+  docType=t;
+  quotCounter++;
+  localStorage.setItem('amkQC',quotCounter.toString());
+  const num=t==='q'?`AMITEK-Q-2026-${String(quotCounter).padStart(3,'0')}`:`AMT/INV/2026/${String(quotCounter).padStart(3,'0')}`;
+  document.getElementById('pvDocNum').textContent=num;
+  document.getElementById('prevBadge').textContent=t==='q'?'QUOTATION':'INVOICE';
+  document.getElementById('bankSection').style.display=t==='i'?'block':'none';
+  document.getElementById('dtq').className='dtb'+(t==='q'?' aq':'');
+  document.getElementById('dti').className='dtb'+(t==='i'?' ai':'');
+  document.getElementById('pqDocType').textContent=t==='q'?'QUOTATION':'INVOICE';
+  document.getElementById('pqNum').textContent=t==='q'?'Quotation No: '+num:'Invoice No: '+num;
+  renderQTable();
+}
+function popSelects(){
+  const pw=PRODS.filter(p=>p.packs.length>0);
+  const opts='<option value="">-- Select Product --</option>'+
+    pw.map(p=>`<option value="${p.id}">${p.sn} (${p.cat})${p.complete?'':' ⚠️'}</option>`).join('');
+  document.getElementById('qpsel').innerHTML=opts;
+}
+function updPacks(){
+  const id=document.getElementById('qpsel').value;
+  const p=PRODS.find(x=>x.id===id);
+  const s=document.getElementById('qpksel');
+  if(!p){s.innerHTML='<option value="">-- Select Pack --</option>';return;}
+  s.innerHTML='<option value="">-- Select Pack --</option>'+
+    p.packs.map((pk,i)=>`<option value="${i}">${pk.kg}kg | Cov: ${pk.cov?pk.cov.toFixed(0)+' sqft/kg':'NA'} | MRP: ₹${pk.mrp.toFixed(0)}/kg</option>`).join('');
+  document.getElementById('qqty').value='';document.getElementById('qarea').value='';
+  document.getElementById('qcalc').style.display='none';
+}
+function getPrice(pk){
+  if(quotMode==='dealer')return pk.dp;
+  if(quotMode==='project')return pk.pp||pk.dp;
+  return pk.ep;
+}
+function calcQty(){
+  const a=parseFloat(document.getElementById('qarea').value)||0;
+  const id=document.getElementById('qpsel').value;
+  const pi=parseInt(document.getElementById('qpksel').value);
+  if(!id||isNaN(pi))return;
+  const p=PRODS.find(x=>x.id===id);const pk=p.packs[pi];
+  if(!pk.cov)return;
+  const q=Math.ceil((a/pk.cov)/pk.kg);
+  document.getElementById('qqty').value=q;
+  showCalcPrev(p,pk,q,a);
+}
+function calcArea2(){
+  const q=parseFloat(document.getElementById('qqty').value)||0;
+  const id=document.getElementById('qpsel').value;
+  const pi=parseInt(document.getElementById('qpksel').value);
+  if(!id||isNaN(pi))return;
+  const p=PRODS.find(x=>x.id===id);const pk=p.packs[pi];
+  if(!pk.cov)return;
+  const a=q*pk.kg*pk.cov;
+  document.getElementById('qarea').value=a.toFixed(0);
+  showCalcPrev(p,pk,q,a);
+}
+function showCalcPrev(p,pk,q,a){
+  const pr=getPrice(pk);const tot=q*pk.kg*pr;
+  const d=document.getElementById('qcalc');d.style.display='block';
+  d.innerHTML=`📦 ${q} packs × ${pk.kg}kg = ${(q*pk.kg).toFixed(1)}kg | Area: ~${a.toFixed(0)} sqft | Amount: ${fC(tot)}`;
+}
+function addProd(){
+  const id=document.getElementById('qpsel').value;
+  const pi=parseInt(document.getElementById('qpksel').value);
+  const q=parseInt(document.getElementById('qqty').value);
+  const a=parseFloat(document.getElementById('qarea').value)||0;
+  if(!id||isNaN(pi)||!q||q<1){alert('Please select product, pack and quantity!');return;}
+  const p=PRODS.find(x=>x.id===id);const pk=p.packs[pi];
+  quotItems.push({uid:Date.now(),pid:id,pi,name:p.sn,hsn:p.hsn||'—',kg:pk.kg,q,area:a,
+    cov:pk.cov,dp:pk.dp,pp:pk.pp,ep:pk.ep,mrp:pk.mrp});
+  renderQTable();
+  document.getElementById('qpsel').value='';
+  document.getElementById('qpksel').innerHTML='<option value="">-- Select Pack --</option>';
+  document.getElementById('qqty').value='';document.getElementById('qarea').value='';
+  document.getElementById('qcalc').style.display='none';
+}
+function quickAddToQuot(id){
+  showTab('quot',document.querySelectorAll('.tb')[1]);
+  setTimeout(()=>{
+    document.getElementById('qpsel').value=id;updPacks();
+  },100);
+}
+function delItem(uid){quotItems=quotItems.filter(x=>x.uid!==uid);renderQTable();}
+function addLabour(){
+  labourItems.push({uid:Date.now(),area:'',sqft:0,rate:0});
+  renderLabour();
+}
+function delLabour(uid){labourItems=labourItems.filter(x=>x.uid!==uid);renderLabour();renderQTable();}
+function updLabour(uid,field,val){
+  const l=labourItems.find(x=>x.uid===uid);if(l){l[field]=field==='area'?val:parseFloat(val)||0;}
+  renderQTable();
+}
+function renderLabour(){
+  const div=document.getElementById('labourList');
+  div.innerHTML=labourItems.map(l=>`
+    <div class="lbr-item">
+      <div class="lbr-g">
+        <div><label>Area Name</label>
+          <input class="pi-inp" value="${l.area}" placeholder="e.g. Terrace" oninput="updLabour(${l.uid},'area',this.value)"></div>
+        <div><label>Sqft</label>
+          <input class="pi-inp" type="number" value="${l.sqft||''}" placeholder="1200" oninput="updLabour(${l.uid},'sqft',this.value)"></div>
+        <div><label>Rate/sqft (₹)</label>
+          <input class="pi-inp" type="number" value="${l.rate||''}" placeholder="15" oninput="updLabour(${l.uid},'rate',this.value)"></div>
+        <button class="pi-del" onclick="delLabour(${l.uid})">×</button>
+      </div>
+      ${l.sqft&&l.rate?`<div style="font-size:10px;color:#E65100;font-weight:700;margin-top:5px;">Total: ${fC(l.sqft*l.rate)}</div>`:''}
+    </div>`).join('');
+}
+
+function renderQTable(){
+  if(!quotItems.length){
+    document.getElementById('qTbody').innerHTML=
+      `<tr><td colspan="10" class="empty" style="padding:24px;">
+        <div class="ei">📦</div><div class="et">Add products to see preview</div></td></tr>`;
+    document.getElementById('totSection').style.display='none';
+    document.getElementById('saveBanner').style.display='none';
+    return;
+  }
+
+  let subT=0,mrpT=0;
+  const isDealer=quotMode==='dealer';
+
+  // Build headers
+  if(isDealer){
+    document.getElementById('qThead').innerHTML=`<tr>
+      <th>Sr</th><th>Product</th><th>HSN</th><th>Pack</th><th>Qty</th>
+      <th class="dealer-col">Dealer/Pack</th>
+      <th class="ec-col">End Client/Pack</th>
+      <th class="mrp-col">MRP/Pack</th>
+      <th>Margin Potential</th><th>Total (Dealer)</th></tr>`;
+  } else {
+    document.getElementById('qThead').innerHTML=`<tr>
+      <th>Sr</th><th>Product</th><th>HSN</th><th>Pack Size</th><th>Qty</th><th>Area (sqft)</th>
+      <th>MRP/Pack</th><th>Rate/Pack</th><th>You Save</th><th>Amount</th></tr>`;
+  }
+
+  document.getElementById('qTbody').innerHTML=quotItems.map((it,i)=>{
+    const pr=getPrice(it);
+    const packPrice=pr*it.kg;
+    const mrpPack=it.mrp*it.kg;
+    const tot=it.q*packPrice;
+    const mrpTot=it.q*mrpPack;
+    const savePack=mrpPack-packPrice;
+    const saveTot=mrpTot-tot;
+    const margin=it.ep&&quotMode==='dealer'?(it.ep-it.dp)*it.kg*it.q:0;
+    subT+=tot;mrpT+=mrpTot;
+
+    if(isDealer){
+      const dpPack=it.dp*it.kg;
+      const epPack=it.ep*it.kg;
+      const mrpPk=it.mrp*it.kg;
+      return `<tr>
+        <td>${i+1}</td>
+        <td><b>${it.name}</b></td>
+        <td style="font-size:9px;">${it.hsn}</td>
+        <td>${it.kg}kg</td><td>${it.q}</td>
+        <td class="dealer-col">${fC(dpPack)}</td>
+        <td class="ec-col">${fC(epPack)}</td>
+        <td class="mrp-col">${fC(mrpPk)}</td>
+        <td class="ec-col">${fC(margin)}</td>
+        <td><b>${fC(tot)}</b>&nbsp;
+          <button onclick="delItem(${it.uid})" style="background:#ffebee;border:none;color:#B71C1C;border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px;">×</button>
+        </td></tr>`;
+    } else {
+      return `<tr>
+        <td>${i+1}</td>
+        <td><b>${it.name}</b></td>
+        <td style="font-size:9px;">${it.hsn}</td>
+        <td>${it.kg}kg</td><td>${it.q}</td>
+        <td style="font-size:10px;">${it.area?it.area.toFixed(0)+' sqft':'—'}</td>
+        <td><span class="mrp-x">${fC(mrpPack)}</span></td>
+        <td class="rate-v">${fC(packPrice)}</td>
+        <td><span class="save-chip">Save ${fC(savePack)}</span></td>
+        <td><b>${fC(tot)}</b>&nbsp;
+          <button onclick="delItem(${it.uid})" style="background:#ffebee;border:none;color:#B71C1C;border-radius:4px;padding:2px 5px;cursor:pointer;font-size:10px;">×</button>
+        </td></tr>`;
+    }
+  }).join('');
+
+  // Labour rows
+  labourItems.forEach(l=>{
+    if(l.sqft&&l.rate){
+      const lt=l.sqft*l.rate;
+      document.getElementById('qTbody').innerHTML+=`<tr class="labour-row">
+        <td>👷</td><td colspan="5"><b>Labour: ${l.area||'—'}</b><br>
+          <span style="font-size:9px;">${l.sqft} sqft @ ₹${l.rate}/sqft</span></td>
+        <td colspan="3" style="text-align:right;font-size:10px;">Labour Total</td>
+        <td><b>${fC(lt)}</b></td></tr>`;
+    }
+  });
+
+  const labT=labourItems.reduce((s,l)=>s+(l.sqft*l.rate||0),0);
+  const gst=subT*0.18;
+  const grand=subT+labT+gst;
+  const totalSave=mrpT-subT;
+
+  document.getElementById('totSub').textContent=fC(subT);
+  document.getElementById('totLabour').textContent=fC(labT);
+  document.getElementById('totGST').textContent=fC(gst);
+  document.getElementById('totGrand').textContent=fC(grand);
+  document.getElementById('totalSave').textContent=fC(totalSave);
+  document.getElementById('totSection').style.display='block';
+  document.getElementById('saveBanner').style.display=totalSave>0?'flex':'none';
+}
+
+function upPrev(){
+  const n=document.getElementById('qcn').value||'—';
+  const cp=document.getElementById('qcp').value;
+  document.getElementById('pvCN').textContent=n;
+  document.getElementById('pvCP').textContent=cp;
+  document.getElementById('pvSite').textContent=document.getElementById('qsite').value||'—';
+  document.getElementById('pvDate').textContent=document.getElementById('qdate').value||'—';
+  document.getElementById('pvValid').textContent=document.getElementById('qvalid').value||'—';
+  document.getElementById('pvBy').textContent=document.getElementById('preBy').value;
+  document.getElementById('pvDes').textContent=document.getElementById('preDes').value;
+}
+
+function doPrint(){
+  if(!quotItems.length){alert('Please add products first!');return;}
+  // Fill print quotation
+  const isDealer=quotMode==='dealer';
+  const n=document.getElementById('qcn').value||'Customer';
+  const num=document.getElementById('pvDocNum').textContent;
+  document.getElementById('pqCustName').textContent=n;
+  document.getElementById('pqCustCont').textContent=
+    [document.getElementById('qcp').value,document.getElementById('qph').value,document.getElementById('qct2').value].filter(Boolean).join(' | ');
+  const gst=document.getElementById('qgst').value;
+  document.getElementById('pqCustGST').textContent=gst?'GST: '+gst:'';
+  document.getElementById('pqSite').textContent=document.getElementById('qsite').value||'—';
+  document.getElementById('pqNum').textContent=(docType==='q'?'Quotation':'Invoice')+' No: '+num;
+  document.getElementById('pqDate').textContent='Date: '+document.getElementById('qdate').value;
+  document.getElementById('pqValid').textContent='Valid: '+document.getElementById('qvalid').value;
+  document.getElementById('pqBank').style.display=docType==='i'?'block':'none';
+  document.getElementById('pqBy').textContent=document.getElementById('preBy').value;
+  document.getElementById('pqDes').textContent=document.getElementById('preDes').value;
+
+  if(isDealer){
+    document.getElementById('pqThead').innerHTML=`<tr>
+      <th>#</th><th>Product</th><th>HSN</th><th>Pack</th><th>Qty</th>
+      <th style="background:#1B5E20;">Dealer Rate/Pack</th>
+      <th style="background:#E65100;">End Client/Pack</th>
+      <th style="background:#B71C1C;">MRP/Pack</th>
+      <th>Your Margin</th><th>Total</th></tr>`;
+  } else {
+    document.getElementById('pqThead').innerHTML=`<tr>
+      <th>#</th><th>Product</th><th>HSN</th><th>Pack Size</th><th>Qty</th>
+      <th>Area</th><th>MRP/Pack</th><th>Rate/Pack</th><th>Saving/Pack</th><th>Amount</th></tr>`;
+  }
+
+  let subT=0,mrpT=0;
+  document.getElementById('pqTbody').innerHTML=quotItems.map((it,i)=>{
+    const pr=getPrice(it);
+    const packPrice=pr*it.kg;
+    const mrpPack=it.mrp*it.kg;
+    const tot=it.q*packPrice;
+    const mrpTot=it.q*mrpPack;
+    const savePack=mrpPack-packPrice;
+    const margin=it.ep&&isDealer?(it.ep-it.dp)*it.kg*it.q:0;
+    subT+=tot;mrpT+=mrpTot;
+    if(isDealer){
+      return `<tr>
+        <td>${i+1}</td><td><b>${it.name}</b><br><span style="font-size:8px;color:#666;">${it.hsn}</span></td>
+        <td>${it.hsn}</td><td>${it.kg}kg</td><td>${it.q}</td>
+        <td style="color:#1B5E20;font-weight:700;">${fC(it.dp*it.kg)}</td>
+        <td style="color:#E65100;font-weight:700;">${fC(it.ep*it.kg)}</td>
+        <td style="color:#B71C1C;font-weight:700;">${fC(it.mrp*it.kg)}</td>
+        <td style="color:#1B5E20;font-weight:700;">${fC(margin)}</td>
+        <td><b>${fC(tot)}</b></td></tr>`;
+    } else {
+      return `<tr>
+        <td>${i+1}</td><td><b>${it.name}</b></td>
+        <td style="font-size:9px;">${it.hsn}</td><td>${it.kg}kg</td><td>${it.q}</td>
+        <td>${it.area?it.area.toFixed(0)+' sqft':'—'}</td>
+        <td><span style="text-decoration:line-through;color:#999;">${fC(mrpPack)}</span></td>
+        <td style="color:#1B5E20;font-weight:700;">${fC(packPrice)}</td>
+        <td style="background:#E8F5E9;color:#1B5E20;font-size:9px;font-weight:700;">${fC(savePack)}</td>
+        <td><b>${fC(tot)}</b></td></tr>`;
+    }
+  }).join('');
+
+  labourItems.forEach(l=>{
+    if(l.sqft&&l.rate){
+      subT+=0; // labour not in GST material base - keep separate
+      document.getElementById('pqTbody').innerHTML+=`<tr style="background:#FFF3E0;">
+        <td>—</td><td colspan="5"><b>Labour: ${l.area||'—'}</b> | ${l.sqft} sqft @ ₹${l.rate}/sqft</td>
+        <td colspan="3" style="text-align:right;">Labour Charges</td>
+        <td><b>${fC(l.sqft*l.rate)}</b></td></tr>`;
+    }
+  });
+
+  const labT=labourItems.reduce((s,l)=>s+(l.sqft*l.rate||0),0);
+  const gstAmt=subT*0.18;
+  const grand=subT+labT+gstAmt;
+  const tsave=mrpT-subT;
+  document.getElementById('pqSub').textContent=fC(subT);
+  document.getElementById('pqLab').textContent=fC(labT);
+  document.getElementById('pqGST').textContent=fC(gstAmt);
+  document.getElementById('pqGrand').textContent=fC(grand);
+  document.getElementById('pqSaveAmt').textContent=fC(tsave);
+  document.getElementById('pqSaveBanner').style.display=tsave>0?'flex':'none';
+  window.print();
+}
+
+function doWhatsApp(){
+  if(!quotItems.length){alert('Add products first!');return;}
+  const n=document.getElementById('qcn').value||'Sir/Ma\'am';
+  let msg=`*AMITEK INFRA*\n_APP Paint Chemicals Pvt. Ltd._\n\nDear ${n},\n\nPlease find your waterproofing quotation below:\n\n`;
+  let tot=0;
+  quotItems.forEach((it,i)=>{
+    const pr=getPrice(it);const amt=it.q*pr*it.kg;tot+=amt;
+    msg+=`${i+1}. ${it.name} | ${it.kg}kg × ${it.q} packs = *${fC(amt)}*\n`;
+  });
+  labourItems.forEach(l=>{if(l.sqft&&l.rate)msg+=`Labour (${l.area}): *${fC(l.sqft*l.rate)}*\n`;});
+  const gst=tot*0.18;
+  msg+=`\n*Grand Total: ${fC(tot+gst)}* (incl. GST @ 18%)\n\n`;
+  msg+=`Contact: Sourabh Bairwa\n📞 +91 92515 54682\n🌐 www.amitekinfra.com`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+function clearAll(){
+  if(confirm('Clear all items from quotation?')){quotItems=[];labourItems=[];renderQTable();renderLabour();}
+}
+
+// ================================================================
+// ADMIN PANEL
+// ================================================================
+function renderAdmin(){
+  const div=document.getElementById('adminProds');
+  div.innerHTML=PRODS.map(p=>`
+    <div class="admin-product">
+      <div class="admin-prod-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <h4>${p.name} &nbsp;
+          <span class="${p.complete?'status-complete':'status-incomplete'}">${p.complete?'✅ Complete':'⚠️ Update Needed'}</span>
+        </h4>
+        <span style="font-size:11px;color:#666;">▼ Click to expand</span>
+      </div>
+      <div style="display:none;">
+        <table class="admin-pack-table">
+          <thead><tr><th>Pack (kg)</th><th>Coverage (sqft/kg)</th>
+            <th style="color:#1B5E20;">Dealer ₹/kg</th>
+            <th style="color:#0C447C;">Project ₹/kg</th>
+            <th style="color:#E65100;">End Client ₹/kg</th>
+            <th style="color:#B71C1C;">MRP ₹/kg</th></tr></thead>
+          <tbody>
+            ${p.packs.map((pk,i)=>`
+            <tr>
+              <td><b>${pk.kg}kg</b></td>
+              <td><input class="admin-inp" type="number" step="0.01" value="${pk.cov||''}" placeholder="coverage" oninput="updProdField('${p.id}',${i},'cov',this.value)"></td>
+              <td><input class="admin-inp" type="number" step="0.01" value="${pk.dp||''}" placeholder="dealer" oninput="updProdField('${p.id}',${i},'dp',this.value)"></td>
+              <td><input class="admin-inp" type="number" step="0.01" value="${pk.pp||''}" placeholder="project" oninput="updProdField('${p.id}',${i},'pp',this.value)"></td>
+              <td><input class="admin-inp" type="number" step="0.01" value="${pk.ep||''}" placeholder="end client" oninput="updProdField('${p.id}',${i},'ep',this.value)"></td>
+              <td><input class="admin-inp" type="number" step="0.01" value="${pk.mrp||''}" placeholder="mrp" oninput="updProdField('${p.id}',${i},'mrp',this.value)"></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`).join('');
+}
+
+function updProdField(id,pi,field,val){
+  const p=PRODS.find(x=>x.id===id);
+  if(p&&p.packs[pi]!==undefined)p.packs[pi][field]=parseFloat(val)||null;
+}
+
+function saveAllPrices(){
+  localStorage.setItem('amkProds',JSON.stringify(PRODS));
+  popSelects();
+  alert('✅ All prices saved successfully!');
+}
+function resetPrices(){
+  if(confirm('Reset all prices to original defaults? This cannot be undone.')){
+    localStorage.removeItem('amkProds');
+    PRODS.forEach((p,i)=>{p.packs=PRODS_DEFAULT[i].packs.map(pk=>({...pk}));});
+    renderAdmin();alert('✅ Prices reset to defaults.');
+  }
+}
+
+// ================================================================
+// MODAL & HELPERS
+// ================================================================
+function openM(id){document.getElementById(id).classList.add('show');}
+function closeM(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');}));
+function fC(n){return '₹'+Math.round(n).toLocaleString('en-IN');}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('pwd').addEventListener('keypress',e=>{if(e.key==='Enter')doLogin();});
+});
+</script>
+</body>
+</html>
