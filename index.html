@@ -818,10 +818,30 @@ PRODS = PRODS.map((p,i)=>{
   const d=PRODS_DEFAULT[i];
   return {...d, packs: d.packs.map((dk,j)=>({...dk,...(p.packs[j]||{})}) )};
 });
-
+// ============================================================
+// MEDIA CONFIG — Sirf yahan file names update karo
+// Files repo mein upload karo same naam se — kaam ho jayega!
+// ============================================================
+const MEDIA_CONFIG = {
+  'HWR22':     {img:'HWR22.jpg',        tds:'TDS_HWR22.pdf',        vid:'https://www.youtube.com/channel/UCY20G0IJ29vyD78zFJ69Leg'},
+  'CMP78':     {img:'CMP78.jpg',        tds:'TDS_CMP78.pdf',        vid:'https://www.youtube.com/channel/UCY20G0IJ29vyD78zFJ69Leg'},
+  'HMC501':    {img:'HMC501.jpg',       tds:'TDS_HMC501.pdf',       vid:'https://www.youtube.com/channel/UCY20G0IJ29vyD78zFJ69Leg'},
+  'SDSHIELD':  {img:'SmartDuo.jpg',     tds:'TDS_SmartDuo.pdf',     vid:'https://www.youtube.com/channel/UCY20G0IJ29vyD78zFJ69Leg'},
+  'TSPRO':     {img:'TransShield.jpg',  tds:'TDS_TransShield.pdf',  vid:'https://www.youtube.com/channel/UCY20G0IJ29vyD78zFJ69Leg'},
+  'COOLROOF':  {img:'CoolRoof.jpg',     tds:'TDS_CoolRoof.pdf',     vid:'https://www.youtube.com/channel/UCY20G0IJ29vyD78zFJ69Leg'},
+  'CRETEBOND': {img:'CreteBond.jpg',    tds:'TDS_CreteBond.pdf',    vid:'https://www.youtube.com/channel/UCY20G0IJ29vyD78zFJ69Leg'},
+  'PU2022':    {img:'PU2022.jpg',       tds:'TDS_PU2022.pdf',       vid:'https://www.youtube.com/channel/UCY20G0IJ29vyD78zFJ69Leg'},
+  'EPXPRIM':   {img:'EpoxyPrimer.jpg',  tds:'TDS_EpoxyPrimer.pdf',  vid:'https://www.youtube.com/channel/UCY20G0IJ29vyD78zFJ69Leg'},
+};
 // Load media config from localStorage
 let mediaCfg = JSON.parse(localStorage.getItem('amkMedia')||'{}');
-PRODS.forEach(p=>{if(mediaCfg[p.id]){p.img=mediaCfg[p.id].img||'';p.tds=mediaCfg[p.id].tds||'';p.vid=mediaCfg[p.id].vid||'';}});
+PRODS.forEach(p=>{
+  const mc = MEDIA_CONFIG[p.id] || {};
+  const lc = mediaCfg[p.id] || {};
+  p.img = lc.img || mc.img || '';
+  p.tds = lc.tds || mc.tds || '';
+  p.vid = lc.vid || mc.vid || '';
+});
 
 // ================================================================
 // QUOTATION STATE
